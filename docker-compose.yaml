@@ -1,0 +1,13 @@
+services:
+  mysqldb:
+    container_name: Password-manager_MySQL
+    image: mysql
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_DATABASE: password_manager
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: bestuser
+      MYSQL_PASSWORD: bestuser
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PUBLIC_KEY: insecure_public_key

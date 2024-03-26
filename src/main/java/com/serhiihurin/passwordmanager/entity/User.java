@@ -17,7 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class User implements UserDetails {
+public class
+User implements UserDetails {
     @Id
     private Long user_id;
     private String email;
@@ -27,6 +28,9 @@ public class User implements UserDetails {
 
     @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "user")
     private List<Record> records;
+
+    @OneToMany(mappedBy = "user")
+    private List<Group> groups;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

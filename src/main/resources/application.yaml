@@ -7,5 +7,5 @@ spring:
     password: bestuser
 
 spring.jpa:
-  hibernate.ddl-auto: create
+  hibernate.ddl-auto: update
 

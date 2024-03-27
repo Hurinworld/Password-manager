@@ -7,8 +7,6 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Configuration
 @EnableAsync
@@ -16,11 +14,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 public class ApplicationConfig {
     private final UserRepository userRepository;
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> userRepository.getByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        return username -> userRepository.getByEmail(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//    }
 
     @Bean
     public ModelMapper modelMapper() {

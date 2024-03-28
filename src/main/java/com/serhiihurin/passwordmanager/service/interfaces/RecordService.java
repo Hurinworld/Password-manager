@@ -7,7 +7,8 @@ import java.util.List;
 public interface RecordService {
     List<Record> getAllRecordsByUserId(Long userId);
     List<Record> getAllRecordsByUserIdAndGroupId(Long userId, Long groupId);
-    Record getRecordByUserId(Long UserId, Long recordId);
+    List<Record> filterRecordsByTitle(String filterText);
+    Record getRecordByUserId(Long userId, Long recordId);
     Record createRecord();
     Record deleteRecord(Long recordId);
 }

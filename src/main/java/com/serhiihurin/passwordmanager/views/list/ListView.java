@@ -12,12 +12,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.PermitAll;
 
 import java.util.Collections;
-import java.util.List;
 
 @PageTitle("Password Manager")
 @Route(value = "")
+@PermitAll
 public class ListView extends VerticalLayout {
     private final RecordFacade recordFacade;
     private final UserService userService;

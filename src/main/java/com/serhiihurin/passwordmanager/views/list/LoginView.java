@@ -1,31 +1,41 @@
 package com.serhiihurin.passwordmanager.views.list;
 
+import com.serhiihurin.passwordmanager.dto.AuthenticationRequestDTO;
+import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterListener;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-import jakarta.annotation.security.PermitAll;
+import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @Route("login")
 @PageTitle("Login | Password Manager")
-@PermitAll
+@AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterListener {
-    private LoginForm loginForm = new LoginForm();
+    private final LoginForm loginForm = new LoginForm();
+//    private final RouterLink routerLink = new RouterLink("Register", RegisterView.class);
 
-    public LoginView() {
+    public LoginView(AuthenticationFacade authenticationFacade) {
+
         addClassName("login-view");
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
-        loginForm.setAction("login");
+        loginForm.addLoginListener(
+                event -> authenticationFacade.authenticateUser(
+                        AuthenticationRequestDTO.builder()
+                        .email(event.getUsername())
+                        .password(event.getPassword())
+                        .build())
+        );
+        loginForm.setForgotPasswordButtonVisible(false);
+
 
         add(
                 new H1("Password Manager"),
-                loginForm
+                loginForm,
+                new RouterLink("Register", RegisterView.class)
         );
     }
 

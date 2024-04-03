@@ -1,6 +1,8 @@
 package com.serhiihurin.passwordmanager.views.list;
 
 import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
+import com.serhiihurin.passwordmanager.entity.User;
+import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.facade.interfaces.RecordFacade;
 import com.serhiihurin.passwordmanager.service.interfaces.UserService;
 import com.vaadin.flow.component.Component;
@@ -13,23 +15,28 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
+import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
 
 @PageTitle("Password Manager")
-@Route(value = "")
+@Route(value = "", layout = MainLayout.class)
 @PermitAll
 public class ListView extends VerticalLayout {
+    private final AuthenticationFacade authenticationFacade;
     private final RecordFacade recordFacade;
-    private final UserService userService;
+//    private final UserService userService;
+    private final ModelMapper modelMapper;
     private RecordForm recordForm;
 
     Grid<RecordSimpleViewDTO> grid = new Grid<>(RecordSimpleViewDTO.class);
     TextField searchField = new TextField();
 
-    public ListView(RecordFacade recordFacade, UserService userService) {
+    public ListView(AuthenticationFacade authenticationFacade, RecordFacade recordFacade, ModelMapper modelMapper) {
+        this.authenticationFacade = authenticationFacade;
         this.recordFacade = recordFacade;
-        this.userService = userService;
+//        this.userService = userService;
+        this.modelMapper = modelMapper;
 
         addClassName("list-view");
         setSizeFull();
@@ -48,8 +55,15 @@ public class ListView extends VerticalLayout {
         grid.setSizeFull();
         grid.setColumns("title", "description", "url", "group");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
+        User user = authenticationFacade.getAuthenticatedUser();
 
-        grid.setItems(recordFacade.getRecordByUserId(userService.getUser(1459912354L), 9876543210L));
+        grid.setItems(recordFacade.getAllRecordsByUserId(user));
+
+        grid.asSingleSelect().addValueChangeListener(event -> editRecord(event.getValue()));
+    }
+
+    private void editRecord(RecordSimpleViewDTO recordSimpleViewDTO) {
+        recordForm.setRecord(recordFacade.getExtendedRecordByUserId(authenticationFacade.getAuthenticatedUser(), 9876543210L));
     }
 
     private Component getToolbar() {
@@ -76,7 +90,7 @@ public class ListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        recordForm = new RecordForm(Collections.emptyList());
+        recordForm = new RecordForm(Collections.emptyList(), modelMapper);
         recordForm.setWidth("25em");
     }
 }

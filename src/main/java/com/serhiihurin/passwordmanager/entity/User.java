@@ -1,10 +1,7 @@
 package com.serhiihurin.passwordmanager.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -26,9 +23,11 @@ public class User implements UserDetails{
     private String firstName;
     private String lastName;
 
+    @ToString.Exclude
     @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "user")
     private List<Record> records;
 
+    @ToString.Exclude
     @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "user")
     private List<Group> groups;
 
@@ -39,7 +38,7 @@ public class User implements UserDetails{
 
     @Override
     public String getPassword() {
-        return null;
+        return masterPassword;
     }
 
     @Override

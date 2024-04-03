@@ -1,6 +1,7 @@
 package com.serhiihurin.passwordmanager.facade;
 
 import com.serhiihurin.passwordmanager.dto.RecordCreationRequestDTO;
+import com.serhiihurin.passwordmanager.dto.RecordExtendedViewDTO;
 import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
 import com.serhiihurin.passwordmanager.entity.Record;
 import com.serhiihurin.passwordmanager.entity.User;
@@ -9,6 +10,7 @@ import com.serhiihurin.passwordmanager.service.interfaces.RecordService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,8 +23,12 @@ public class RecordFacadeImpl implements RecordFacade {
     private final ModelMapper modelMapper;
 
     @Override
-    public List<Record> getAllRecordsByUserId(User currentAuthenticatedUser) {
-        return null;
+    public List<RecordSimpleViewDTO> getAllRecordsByUserId(User currentAuthenticatedUser) {
+        return modelMapper.map(
+                recordService.getAllRecordsByUserId(currentAuthenticatedUser.getUserId()),
+                new TypeToken<List<RecordSimpleViewDTO>>(){
+                }.getType()
+        );
     }
 
     @Override
@@ -35,6 +41,14 @@ public class RecordFacadeImpl implements RecordFacade {
         return modelMapper.map(
                 recordService.getRecordByUserId(currentAuthenticatedUser.getUserId(), recordId),
                 RecordSimpleViewDTO.class
+        );
+    }
+
+    @Override
+    public RecordExtendedViewDTO getExtendedRecordByUserId(User currentAuthenticatedUser, Long recordId) {
+        return modelMapper.map(
+                recordService.getRecordByUserId(currentAuthenticatedUser.getUserId(), recordId),
+                RecordExtendedViewDTO.class
         );
     }
 

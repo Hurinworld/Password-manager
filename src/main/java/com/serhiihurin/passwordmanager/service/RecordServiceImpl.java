@@ -15,7 +15,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public List<Record> getAllRecordsByUserId(Long userId) {
-        return null;
+        return recordRepository.getRecordsByUserUserId(userId);
     }
 
     @Override
@@ -24,11 +24,11 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<Record> filterRecordsByTitle(String filterText) {
+    public List<Record> filterRecordsByTitle(Long userId, String filterText) {
         if (filterText == null || filterText.isEmpty()) {
-            return recordRepository.getRecordsByUserUserId(1459912354L);
+            return recordRepository.getRecordsByUserUserId(userId);
         } else {
-            return recordRepository.search(1459912354L, filterText);
+            return recordRepository.search(userId, filterText);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.serhiihurin.passwordmanager.config;
 
 import com.serhiihurin.passwordmanager.dao.UserRepository;
+import com.vaadin.flow.spring.security.AuthenticationContext;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -53,4 +54,9 @@ public class ApplicationConfig {
                 .setMatchingStrategy(MatchingStrategies.LOOSE);
         return modelMapper;
     }
+
+//    @Bean
+//    public AuthenticationContext authenticationContext() {
+//        return new AuthenticationContext();
+//    }
 }

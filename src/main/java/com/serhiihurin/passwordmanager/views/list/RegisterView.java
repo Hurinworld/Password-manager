@@ -3,6 +3,7 @@ package com.serhiihurin.passwordmanager.views.list;
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H1;
@@ -49,13 +50,16 @@ public class RegisterView extends VerticalLayout {
         register.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         register.addClickShortcut(Key.ENTER);
 
-        register.addClickListener(event -> authenticationFacade.registerUser(
-                firstName.getValue(),
-                lastName.getValue(),
-                email.getValue(),
-                masterPassword.getValue(),
-                confirmMasterPassword.getValue()
-        ));
+        register.addClickListener(event -> {
+            authenticationFacade.registerUser(
+                    firstName.getValue(),
+                    lastName.getValue(),
+                    email.getValue(),
+                    masterPassword.getValue(),
+                    confirmMasterPassword.getValue()
+            );
+            UI.getCurrent().navigate("home");
+        });
 
         return register;
     }

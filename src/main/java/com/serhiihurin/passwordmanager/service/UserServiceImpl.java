@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(RegisterRequestDTO registerRequestDTO) {
         User user = User.builder()
-                .userId(1L)
+                .userId(2L)
                 .firstName(registerRequestDTO.getFirstName())
                 .lastName(registerRequestDTO.getLastName())
                 .email(registerRequestDTO.getEmail())

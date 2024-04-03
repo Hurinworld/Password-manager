@@ -28,6 +28,7 @@ public class ListView extends VerticalLayout {
 //    private final UserService userService;
     private final ModelMapper modelMapper;
     private RecordForm recordForm;
+    private final User currentAuthenticatedUser;
 
     Grid<RecordSimpleViewDTO> grid = new Grid<>(RecordSimpleViewDTO.class);
     TextField searchField = new TextField();
@@ -38,9 +39,10 @@ public class ListView extends VerticalLayout {
 //        this.userService = userService;
         this.modelMapper = modelMapper;
 
+        currentAuthenticatedUser = authenticationFacade.getAuthenticatedUser();
+
         addClassName("list-view");
         setSizeFull();
-//        add(new H1("Hello World!"));
         configureGrid();
         configureForm();
 
@@ -48,6 +50,8 @@ public class ListView extends VerticalLayout {
                 getToolbar(),
                 getContent()
         );
+
+        updateList();
     }
 
     private void configureGrid() {
@@ -55,21 +59,20 @@ public class ListView extends VerticalLayout {
         grid.setSizeFull();
         grid.setColumns("title", "description", "url", "group");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
-        User user = authenticationFacade.getAuthenticatedUser();
-
-        grid.setItems(recordFacade.getAllRecordsByUserId(user));
+//        User user = authenticationFacade.getAuthenticatedUser();
 
         grid.asSingleSelect().addValueChangeListener(event -> editRecord(event.getValue()));
     }
 
     private void editRecord(RecordSimpleViewDTO recordSimpleViewDTO) {
-        recordForm.setRecord(recordFacade.getExtendedRecordByUserId(authenticationFacade.getAuthenticatedUser(), 9876543210L));
+        recordForm.setRecord(recordFacade.getExtendedRecordByUserId(authenticationFacade.getAuthenticatedUser(), recordSimpleViewDTO.getRecordId()));
     }
 
     private Component getToolbar() {
         searchField.setPlaceholder("Search record by name...");
         searchField.setClearButtonVisible(true);
         searchField.setValueChangeMode(ValueChangeMode.LAZY);
+        searchField.addValueChangeListener(event -> updateList());
 
         Button addRecordButton = new Button("Add record");
 
@@ -92,5 +95,9 @@ public class ListView extends VerticalLayout {
     private void configureForm() {
         recordForm = new RecordForm(Collections.emptyList(), modelMapper);
         recordForm.setWidth("25em");
+    }
+
+    private void updateList() {
+        grid.setItems(recordFacade.filterRecordsByTitle(currentAuthenticatedUser.getUserId(), searchField.getValue()));
     }
 }

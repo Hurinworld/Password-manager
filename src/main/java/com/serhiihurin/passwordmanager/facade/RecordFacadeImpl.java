@@ -53,6 +53,15 @@ public class RecordFacadeImpl implements RecordFacade {
     }
 
     @Override
+    public List<RecordSimpleViewDTO> filterRecordsByTitle(Long userId, String filterText) {
+        return modelMapper.map(
+                recordService.filterRecordsByTitle(userId, filterText),
+                new TypeToken<List<RecordSimpleViewDTO>>(){
+                }.getType()
+        );
+    }
+
+    @Override
     public Record createRecord(User currentAuthenticatedUser, RecordCreationRequestDTO recordCreationRequestDTO) {
         return null;
     }

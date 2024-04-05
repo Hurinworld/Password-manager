@@ -14,6 +14,6 @@ public interface RecordFacade {
     RecordSimpleViewDTO getRecordByUserId(User currentAuthenticatedUser, Long recordId);
     RecordExtendedViewDTO getExtendedRecordByUserId(User currentAuthenticatedUser, Long recordId);
     List<RecordSimpleViewDTO> filterRecordsByTitle(Long userId, String filterText);
-    Record createRecord(User currentAuthenticatedUser, RecordCreationRequestDTO recordCreationRequestDTO);
+    void createRecord(User currentAuthenticatedUser, RecordExtendedViewDTO recordExtendedViewDTO);
     void deleteRecord(User currentAuthenticatedUser, Long recordId);
 }

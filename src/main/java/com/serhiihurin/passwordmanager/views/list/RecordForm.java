@@ -1,9 +1,10 @@
 package com.serhiihurin.passwordmanager.views.list;
 
 import com.serhiihurin.passwordmanager.dto.RecordExtendedViewDTO;
-import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
 import com.serhiihurin.passwordmanager.entity.Group;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -14,14 +15,11 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
-import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
 public class RecordForm extends FormLayout {
     Binder<RecordExtendedViewDTO> binder = new BeanValidationBinder<>(RecordExtendedViewDTO.class);
-
-    private final ModelMapper modelMapper;
 
     TextField title = new TextField("Title");
     TextField description = new TextField("Description");
@@ -34,10 +32,7 @@ public class RecordForm extends FormLayout {
     Button delete = new Button("Delete");
     Button cancel = new Button("Cancel");
 
-    private RecordExtendedViewDTO recordExtendedViewDTO;
-
-    public RecordForm(List<Group> groups, ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
+    public RecordForm(List<Group> groups) {
 
         addClassName("record-form");
         binder.bindInstanceFields(this);
@@ -57,8 +52,7 @@ public class RecordForm extends FormLayout {
     }
 
     public void setRecord(RecordExtendedViewDTO recordExtendedViewDTO) {
-        this.recordExtendedViewDTO = recordExtendedViewDTO;
-        binder.readBean(recordExtendedViewDTO);
+        binder.setBean(recordExtendedViewDTO);
     }
 
     private Component createButtonLayout() {
@@ -66,9 +60,57 @@ public class RecordForm extends FormLayout {
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
+        save.addClickListener(event -> fireEvent(new SaveEvent(this, binder.getBean())));
+        delete.addClickListener(event -> fireEvent(new DeleteEvent(this, binder.getBean())));
+        cancel.addClickListener(event -> fireEvent(new CloseEvent(this)));
+
         save.addClickShortcut(Key.ENTER);
+        delete.addClickShortcut(Key.DELETE);
         cancel.addClickShortcut(Key.ESCAPE);
 
         return new HorizontalLayout(save, delete, cancel);
+    }
+
+    public static abstract class ContactFormEvent extends ComponentEvent<RecordForm> {
+        private final RecordExtendedViewDTO recordExtendedViewDTO;
+
+        protected ContactFormEvent(RecordForm source, RecordExtendedViewDTO recordExtendedViewDTO) {
+            super(source, false);
+            this.recordExtendedViewDTO = recordExtendedViewDTO;
+        }
+
+        public RecordExtendedViewDTO getRecord() {
+            return recordExtendedViewDTO;
+        }
+    }
+
+    public static class SaveEvent extends ContactFormEvent {
+        SaveEvent(RecordForm source, RecordExtendedViewDTO recordExtendedViewDTO) {
+            super(source, recordExtendedViewDTO);
+        }
+    }
+
+    public static class DeleteEvent extends ContactFormEvent {
+        DeleteEvent(RecordForm source, RecordExtendedViewDTO recordExtendedViewDTO) {
+            super(source, recordExtendedViewDTO);
+        }
+
+    }
+
+    public static class CloseEvent extends ContactFormEvent {
+        CloseEvent(RecordForm source) {
+            super(source, null);
+        }
+    }
+
+    public void addDeleteListener(ComponentEventListener<DeleteEvent> listener) {
+        addListener(DeleteEvent.class, listener);
+    }
+
+    public void addSaveListener(ComponentEventListener<SaveEvent> listener) {
+        addListener(SaveEvent.class, listener);
+    }
+    public void addCloseListener(ComponentEventListener<CloseEvent> listener) {
+        addListener(CloseEvent.class, listener);
     }
 }

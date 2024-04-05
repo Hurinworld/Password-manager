@@ -1,6 +1,5 @@
 package com.serhiihurin.passwordmanager.facade;
 
-import com.serhiihurin.passwordmanager.dto.RecordCreationRequestDTO;
 import com.serhiihurin.passwordmanager.dto.RecordExtendedViewDTO;
 import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
 import com.serhiihurin.passwordmanager.entity.Record;
@@ -62,12 +61,13 @@ public class RecordFacadeImpl implements RecordFacade {
     }
 
     @Override
-    public Record createRecord(User currentAuthenticatedUser, RecordCreationRequestDTO recordCreationRequestDTO) {
-        return null;
+    public void createRecord(User currentAuthenticatedUser, RecordExtendedViewDTO recordExtendedViewDTO) {
+        recordExtendedViewDTO.setRecordId(1L);
+        recordService.createRecord(currentAuthenticatedUser, recordExtendedViewDTO);
     }
 
     @Override
     public void deleteRecord(User currentAuthenticatedUser, Long recordId) {
-
+        recordService.deleteRecord(recordId);
     }
 }

@@ -1,7 +1,9 @@
 package com.serhiihurin.passwordmanager.service;
 
 import com.serhiihurin.passwordmanager.dao.RecordRepository;
+import com.serhiihurin.passwordmanager.dto.RecordExtendedViewDTO;
 import com.serhiihurin.passwordmanager.entity.Record;
+import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.service.interfaces.RecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,12 +40,23 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public Record createRecord() {
-        return null;
+    public Record createRecord(User currentAuthenticatedUser, RecordExtendedViewDTO recordExtendedViewDTO) {
+        return recordRepository.save(
+                Record.builder()
+                        .recordId(recordExtendedViewDTO.getRecordId())
+                        .title(recordExtendedViewDTO.getTitle())
+                        .description(recordExtendedViewDTO.getDescription())
+                        .username(recordExtendedViewDTO.getUsername())
+                        .password(recordExtendedViewDTO.getPassword())
+                        .url(recordExtendedViewDTO.getUrl())
+                        .group(recordExtendedViewDTO.getGroup())
+                        .user(currentAuthenticatedUser)
+                        .build()
+        );
     }
 
     @Override
-    public Record deleteRecord(Long recordId) {
-        return null;
+    public void deleteRecord(Long recordId) {
+        recordRepository.deleteById(recordId);
     }
 }

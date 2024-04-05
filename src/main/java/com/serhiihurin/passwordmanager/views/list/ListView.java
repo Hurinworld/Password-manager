@@ -1,10 +1,10 @@
 package com.serhiihurin.passwordmanager.views.list;
 
+import com.serhiihurin.passwordmanager.dto.RecordExtendedViewDTO;
 import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
 import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.facade.interfaces.RecordFacade;
-import com.serhiihurin.passwordmanager.service.interfaces.UserService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -15,7 +15,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
-import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
 
@@ -23,21 +22,15 @@ import java.util.Collections;
 @Route(value = "", layout = MainLayout.class)
 @PermitAll
 public class ListView extends VerticalLayout {
-    private final AuthenticationFacade authenticationFacade;
     private final RecordFacade recordFacade;
-//    private final UserService userService;
-    private final ModelMapper modelMapper;
     private RecordForm recordForm;
     private final User currentAuthenticatedUser;
 
     Grid<RecordSimpleViewDTO> grid = new Grid<>(RecordSimpleViewDTO.class);
     TextField searchField = new TextField();
 
-    public ListView(AuthenticationFacade authenticationFacade, RecordFacade recordFacade, ModelMapper modelMapper) {
-        this.authenticationFacade = authenticationFacade;
+    public ListView(AuthenticationFacade authenticationFacade, RecordFacade recordFacade) {
         this.recordFacade = recordFacade;
-//        this.userService = userService;
-        this.modelMapper = modelMapper;
 
         currentAuthenticatedUser = authenticationFacade.getAuthenticatedUser();
 
@@ -52,20 +45,31 @@ public class ListView extends VerticalLayout {
         );
 
         updateList();
+        closeRecordForm();
     }
+
 
     private void configureGrid() {
         grid.addClassName("record-grid");
         grid.setSizeFull();
         grid.setColumns("title", "description", "url", "group");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
-//        User user = authenticationFacade.getAuthenticatedUser();
 
         grid.asSingleSelect().addValueChangeListener(event -> editRecord(event.getValue()));
     }
 
     private void editRecord(RecordSimpleViewDTO recordSimpleViewDTO) {
-        recordForm.setRecord(recordFacade.getExtendedRecordByUserId(authenticationFacade.getAuthenticatedUser(), recordSimpleViewDTO.getRecordId()));
+        if (recordSimpleViewDTO == null) {
+            closeRecordForm();
+        } else {
+            recordForm.setRecord(
+                    recordFacade.getExtendedRecordByUserId(
+                            currentAuthenticatedUser, recordSimpleViewDTO.getRecordId()
+                    )
+            );
+            recordForm.setVisible(true);
+            recordForm.addClassName("record-form");
+        }
     }
 
     private Component getToolbar() {
@@ -75,6 +79,7 @@ public class ListView extends VerticalLayout {
         searchField.addValueChangeListener(event -> updateList());
 
         Button addRecordButton = new Button("Add record");
+        addRecordButton.addClickListener(event -> addRecord());
 
         HorizontalLayout toolbar = new HorizontalLayout(searchField, addRecordButton);
         toolbar.addClassName("toolbar");
@@ -93,11 +98,56 @@ public class ListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        recordForm = new RecordForm(Collections.emptyList(), modelMapper);
+        recordForm = new RecordForm(Collections.emptyList());
         recordForm.setWidth("25em");
+
+//        recordForm.save.addClickListener(
+//                event -> {
+//                    recordFacade.createRecord(currentAuthenticatedUser, recordForm.getRecord());
+//                    updateList();
+//                    closeRecordForm();
+//                }
+//        );
+//        recordForm.delete.addClickListener(
+//                event -> recordFacade.deleteRecord(currentAuthenticatedUser, recordForm.getRecord().getRecordId())
+//        );
+//        recordForm.cancel.addClickListener(event -> closeRecordForm());
+
+        recordForm.addSaveListener(this::createRecord);
+        recordForm.addDeleteListener(this::deleteRecord);
+        recordForm.addCloseListener(event -> closeRecordForm());
     }
 
     private void updateList() {
-        grid.setItems(recordFacade.filterRecordsByTitle(currentAuthenticatedUser.getUserId(), searchField.getValue()));
+        grid.setItems(
+                recordFacade.filterRecordsByTitle(
+                        currentAuthenticatedUser.getUserId(), searchField.getValue()
+                )
+        );
+    }
+
+    private void closeRecordForm() {
+        recordForm.setRecord(null);
+        recordForm.setVisible(false);
+        recordForm.removeClassName("record-form");
+    }
+
+    private void addRecord() {
+        grid.asSingleSelect().clear();
+        recordForm.setRecord(new RecordExtendedViewDTO());
+        recordForm.setVisible(true);
+        recordForm.addClassName("record-form");
+    }
+
+    private void createRecord(RecordForm.SaveEvent event) {
+        recordFacade.createRecord(currentAuthenticatedUser, event.getRecord());
+        updateList();
+        closeRecordForm();
+    }
+
+    private void deleteRecord(RecordForm.DeleteEvent event) {
+        recordFacade.deleteRecord(currentAuthenticatedUser, event.getRecord().getRecordId());
+        updateList();
+        closeRecordForm();
     }
 }

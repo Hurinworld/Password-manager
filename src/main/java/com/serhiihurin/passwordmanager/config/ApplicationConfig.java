@@ -1,9 +1,13 @@
 package com.serhiihurin.passwordmanager.config;
 
 import com.serhiihurin.passwordmanager.dao.UserRepository;
+import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
+import com.serhiihurin.passwordmanager.entity.Group;
+import com.serhiihurin.passwordmanager.entity.Record;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,6 +54,8 @@ public class ApplicationConfig {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
+        modelMapper.typeMap(Record.class, RecordSimpleViewDTO.class)
+                .addMappings(mapper -> mapper.map(Record::getGroupName, RecordSimpleViewDTO::setGroup));
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.LOOSE);
         return modelMapper;

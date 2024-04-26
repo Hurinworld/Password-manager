@@ -166,6 +166,12 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>net.samuelcampos</groupId>
+			<artifactId>usbdrivedetector</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

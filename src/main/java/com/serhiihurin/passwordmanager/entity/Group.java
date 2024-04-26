@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 public class Group {
     @Id
-    private Long groupId;
+    private String groupId;
     private String groupName;
     private Integer capacity;
 

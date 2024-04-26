@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class RecordExtendedViewDTO {
-    private Long recordId;
+    private String recordId;
     private String title;
     private String description;
     private String username;

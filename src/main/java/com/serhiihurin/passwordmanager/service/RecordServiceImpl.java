@@ -16,17 +16,17 @@ public class RecordServiceImpl implements RecordService {
     private final RecordRepository recordRepository;
 
     @Override
-    public List<Record> getAllRecordsByUserId(Long userId) {
+    public List<Record> getAllRecordsByUserId(String userId) {
         return recordRepository.getRecordsByUserUserId(userId);
     }
 
     @Override
-    public List<Record> getAllRecordsByUserIdAndGroupId(Long userId, Long groupId) {
+    public List<Record> getAllRecordsByUserIdAndGroupId(String userId, String groupId) {
         return null;
     }
 
     @Override
-    public List<Record> filterRecordsByTitle(Long userId, String filterText) {
+    public List<Record> filterRecordsByTitle(String userId, String filterText) {
         if (filterText == null || filterText.isEmpty()) {
             return recordRepository.getRecordsByUserUserId(userId);
         } else {
@@ -35,7 +35,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public Record getRecordByUserId(Long userId, Long recordId) {
+    public Record getRecordByUserId(String userId, String recordId) {
         return recordRepository.getRecordByUserUserIdAndRecordId(userId, recordId);
     }
 
@@ -56,7 +56,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public void deleteRecord(Long recordId) {
+    public void deleteRecord(String recordId) {
         recordRepository.deleteById(recordId);
     }
 }

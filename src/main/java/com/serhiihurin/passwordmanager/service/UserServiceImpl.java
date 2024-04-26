@@ -3,6 +3,8 @@ package com.serhiihurin.passwordmanager.service;
 import com.serhiihurin.passwordmanager.dao.UserRepository;
 import com.serhiihurin.passwordmanager.dto.RegisterRequestDTO;
 import com.serhiihurin.passwordmanager.entity.User;
+import com.serhiihurin.passwordmanager.enums.EntityType;
+import com.serhiihurin.passwordmanager.service.interfaces.GeneratorService;
 import com.serhiihurin.passwordmanager.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,11 +13,12 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final GeneratorService generatorService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public User getUser(Long userId) {
+    public User getUser(String userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Oops!"));
     }
@@ -29,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(RegisterRequestDTO registerRequestDTO) {
         User user = User.builder()
-                .userId(2L)
+                .userId(generatorService.generateEntityId(EntityType.USER))
                 .firstName(registerRequestDTO.getFirstName())
                 .lastName(registerRequestDTO.getLastName())
                 .email(registerRequestDTO.getEmail())

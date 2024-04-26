@@ -11,7 +11,7 @@ import lombok.*;
 @Builder
 public class Record {
     @Id
-    private Long recordId;
+    private String recordId;
     private String title;
     private String description;
 //    private String group;
@@ -28,4 +28,12 @@ public class Record {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
+
+    public String getGroupName() {
+        if (group == null) {
+            return  null;
+        } else {
+            return group.getGroupName();
+        }
+    }
 }

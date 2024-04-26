@@ -7,10 +7,10 @@ import com.serhiihurin.passwordmanager.entity.User;
 import java.util.List;
 
 public interface RecordService {
-    List<Record> getAllRecordsByUserId(Long userId);
-    List<Record> getAllRecordsByUserIdAndGroupId(Long userId, Long groupId);
-    List<Record> filterRecordsByTitle(Long userId, String filterText);
-    Record getRecordByUserId(Long userId, Long recordId);
+    List<Record> getAllRecordsByUserId(String userId);
+    List<Record> getAllRecordsByUserIdAndGroupId(String userId, String groupId);
+    List<Record> filterRecordsByTitle(String userId, String filterText);
+    Record getRecordByUserId(String userId, String recordId);
     Record createRecord(User currentAuthenticatedUser, RecordExtendedViewDTO recordExtendedViewDTO);
-    void deleteRecord(Long recordId);
+    void deleteRecord(String recordId);
 }

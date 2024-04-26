@@ -7,12 +7,12 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface RecordRepository extends JpaRepository<Record, Long> {
-    List<Record> getRecordsByUserUserId(Long userId);
+public interface RecordRepository extends JpaRepository<Record, String> {
+    List<Record> getRecordsByUserUserId(String userId);
 //    @Query("SELECT r FROM Record r WHERE r.user.userId = :userId AND r.recordId = :recordId")
-    Record getRecordByUserUserIdAndRecordId(Long userId, Long recordId);
+    Record getRecordByUserUserIdAndRecordId(String userId, String recordId);
 
     @Query("SELECT r FROM Record r " +
             "WHERE r.user.userId = :userId AND LOWER(r.title) LIKE LOWER(CONCAT('%', :filterText, '%'))")
-    List<Record> search(@Param("userId") Long userId, @Param("filterText") String filterText);
+    List<Record> search(@Param("userId") String userId, @Param("filterText") String filterText);
 }

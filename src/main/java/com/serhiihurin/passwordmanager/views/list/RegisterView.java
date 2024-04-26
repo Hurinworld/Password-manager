@@ -58,7 +58,7 @@ public class RegisterView extends VerticalLayout {
                     masterPassword.getValue(),
                     confirmMasterPassword.getValue()
             );
-            UI.getCurrent().navigate("home");
+            UI.getCurrent().navigate("");
         });
 
         return register;

@@ -1,12 +1,10 @@
 package com.serhiihurin.passwordmanager.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 
 import java.util.Collection;
 import java.util.List;
@@ -17,16 +15,21 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class User implements UserDetails {
+public class User implements UserDetails{
     @Id
-    private Long user_id;
+    private String userId;
     private String email;
     private String masterPassword;
     private String firstName;
     private String lastName;
 
+    @ToString.Exclude
     @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "user")
     private List<Record> records;
+
+    @ToString.Exclude
+    @OneToMany(cascade = {CascadeType.REMOVE}, mappedBy = "user")
+    private List<Group> groups;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -35,7 +38,7 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return masterPassword;
     }
 
     @Override

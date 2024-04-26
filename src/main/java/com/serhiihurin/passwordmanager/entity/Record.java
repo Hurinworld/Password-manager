@@ -11,10 +11,10 @@ import lombok.*;
 @Builder
 public class Record {
     @Id
-    private Long recordId;
+    private String recordId;
     private String title;
     private String description;
-    private String group;
+//    private String group;
     private String username;
     private String password;
     private String url;
@@ -23,4 +23,17 @@ public class Record {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ToString.Exclude
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
+
+    public String getGroupName() {
+        if (group == null) {
+            return  null;
+        } else {
+            return group.getGroupName();
+        }
+    }
 }

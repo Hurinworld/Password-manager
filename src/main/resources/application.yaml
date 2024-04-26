@@ -1,1 +1,16 @@
-spring.application.name=password-manager
+spring:
+  application:
+    name: password-manager
+  datasource:
+    url: jdbc:mysql://localhost:3307/password_manager?useSSL=false&&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: bestuser
+    password: bestuser
+
+spring.jpa:
+  hibernate.ddl-auto: update
+
+application:
+  security:
+    jwt:
+      secret-key: cb24f858d80b44012c2af75344f4cbcf4b33bc4ee40130240f17fc9e368fb4f5
+      expiration: 86400000 #day

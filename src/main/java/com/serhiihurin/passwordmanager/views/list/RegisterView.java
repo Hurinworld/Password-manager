@@ -1,6 +1,7 @@
 package com.serhiihurin.passwordmanager.views.list;
 
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
+import com.serhiihurin.passwordmanager.service.interfaces.USBFlashDriveInfoRetrievalService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
@@ -13,11 +14,14 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import lombok.extern.slf4j.Slf4j;
 
 @Route("register")
 @AnonymousAllowed
+@Slf4j
 public class RegisterView extends VerticalLayout {
     private final AuthenticationFacade authenticationFacade;
+    private final USBFlashDriveInfoRetrievalService usbService;
 
     private final TextField firstName = new TextField("First name");
     private final TextField lastName = new TextField("Last name");
@@ -27,8 +31,9 @@ public class RegisterView extends VerticalLayout {
 
     Button register = new Button("Register");
 
-    public RegisterView(AuthenticationFacade authenticationFacade) {
+    public RegisterView(AuthenticationFacade authenticationFacade, USBFlashDriveInfoRetrievalService usbService) {
         this.authenticationFacade = authenticationFacade;
+        this.usbService = usbService;
 
         addClassName("register-view");
         setSizeFull();
@@ -44,6 +49,7 @@ public class RegisterView extends VerticalLayout {
                 confirmMasterPassword,
                 configureRegisterButton()
         );
+        log.info(this.usbService.getUSBFlashDriveInfo());
     }
 
     private Component configureRegisterButton() {

@@ -4,10 +4,11 @@ import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.service.interfaces.USBFlashDriveInfoRetrievalService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
@@ -28,8 +29,10 @@ public class RegisterView extends VerticalLayout {
     private final EmailField email = new EmailField("email");
     private final PasswordField masterPassword = new PasswordField("master password");
     private final PasswordField confirmMasterPassword = new PasswordField("confirm master password");
+    private final H1 mainText = new H1("Register | Password Manager");
+    private final H2 USBFlashDriveText = new H2("Insert your USB flash drive to complete registration");
 
-    Button register = new Button("Register");
+    Button nextButton = new Button("Next");
 
     public RegisterView(AuthenticationFacade authenticationFacade, USBFlashDriveInfoRetrievalService usbService) {
         this.authenticationFacade = authenticationFacade;
@@ -41,32 +44,58 @@ public class RegisterView extends VerticalLayout {
         setJustifyContentMode(JustifyContentMode.CENTER);
 
         add(
-                new H1("Register | Password Manager"),
+                mainText,
                 firstName,
                 lastName,
                 email,
-                masterPassword,
-                confirmMasterPassword,
-                configureRegisterButton()
+//                masterPassword,
+//                confirmMasterPassword,
+                configureNextButton()
         );
         log.info(this.usbService.getUSBFlashDriveInfo());
     }
 
-    private Component configureRegisterButton() {
-        register.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        register.addClickShortcut(Key.ENTER);
+    private Component configureNextButton() {
+        masterPassword.setReadOnly(true);
+        nextButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        nextButton.addClickShortcut(Key.ENTER);
 
-        register.addClickListener(event -> {
-            authenticationFacade.registerUser(
-                    firstName.getValue(),
-                    lastName.getValue(),
-                    email.getValue(),
-                    masterPassword.getValue(),
-                    confirmMasterPassword.getValue()
-            );
-            UI.getCurrent().navigate("");
+        nextButton.addClickListener(event -> {
+//            authenticationFacade.registerUser(
+//                    firstName.getValue(),
+//                    lastName.getValue(),
+//                    email.getValue(),
+//                    masterPassword.getValue(),
+//                    confirmMasterPassword.getValue()
+//            );
+//            UI.getCurrent().navigate("");
+            if (!validateData()) {
+                validateData();
+            } else {
+                updateView();
+            }
         });
 
-        return register;
+        return nextButton;
+    }
+
+    private boolean validateData() {
+        if (firstName.getValue().isEmpty()) {
+            Notification.show("First name field is required");
+            return false;
+        } else if (lastName.getValue().isEmpty()) {
+            Notification.show("Last name field is required");
+            return false;
+        } else if (email.getValue().isEmpty()) {
+            Notification.show("Email field is required");
+            return false;
+        }
+        return true;
+    }
+
+    private void updateView() {
+        remove(mainText, firstName, lastName, email, nextButton);
+        add(mainText, USBFlashDriveText, masterPassword);
+
     }
 }

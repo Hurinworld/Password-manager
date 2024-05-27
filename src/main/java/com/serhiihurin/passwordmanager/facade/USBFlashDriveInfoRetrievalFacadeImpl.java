@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -16,28 +18,55 @@ public class USBFlashDriveInfoRetrievalFacadeImpl implements USBFlashDriveInfoRe
     private final USBFlashDriveInfoRetrievalService usbService;
 
     @Override
-    public void linkUSBFlashDrive(User currentAuthenticatedUser) {
-        Thread thread = new Thread(() -> {
-            // Поки метод не поверне значення відмінне від null, викликаємо його кожні 2 секунди
-            String userMasterPassword;
+    public String linkUSBFlashDrive(User currentAuthenticatedUser) {
+        Callable<String> usbFlashDriveTask = () -> {
+            String USBFlashDriveInfo;
             do {
-                userMasterPassword = usbService.getUSBFlashDriveInfo(); // Викликаємо метод, що повертає рядок
-                if (!Objects.equals(userMasterPassword, "")) {
-                    log.info("Отримано рядок: " + userMasterPassword);
-
+                USBFlashDriveInfo = usbService.getUSBFlashDriveInfo();
+                if (!Objects.equals(USBFlashDriveInfo, "")) {
+                    log.info("Got string: {}", USBFlashDriveInfo);
+                    return USBFlashDriveInfo;
                 } else {
                     try {
                         log.info("Empty data");
-                        Thread.sleep(2000); // Почекати 2 секунди
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-            } while (Objects.equals(userMasterPassword, ""));
-        });
+            } while (Objects.equals(USBFlashDriveInfo, ""));
+            return null; // Якщо нічого не знайдено, повертаємо null
+        };
 
-        // Запускаємо потік
-        thread.start();
+        String USBFlashDriveInfo = null;
+        try {
+            USBFlashDriveInfo = usbFlashDriveTask.call();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return USBFlashDriveInfo;
+//        CompletableFuture<String> future = new CompletableFuture<>();
+//
+//        Thread thread = new Thread(() -> {
+//            String userMasterPassword;
+//            do {
+//                userMasterPassword = usbService.getUSBFlashDriveInfo();
+//                if (!Objects.equals(userMasterPassword, "")) {
+//                    future.complete(userMasterPassword);
+//                    log.info("Отримано рядок: " + userMasterPassword);
+//                } else {
+//                    try {
+//                        log.info("Empty data");
+//                        Thread.sleep(2000); // Почекати 2 секунди
+//                    } catch (InterruptedException e) {
+//                        future.completeExceptionally(e);
+//                    }
+//                }
+//            } while (Objects.equals(userMasterPassword, ""));
+//        });
+//
+//        thread.start();
+//        return future;
     }
 
     @Override

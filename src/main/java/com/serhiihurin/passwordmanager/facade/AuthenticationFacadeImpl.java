@@ -21,8 +21,7 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
             String firstName,
             String lastName,
             String email,
-            String masterPassword,
-            String confirmMasterPassword
+            String masterPassword
     ) {
         if (firstName.trim().isEmpty()) {
             Notification.show("First name field is required");
@@ -30,8 +29,6 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
             Notification.show("Last name field is required");
         } else if (email.trim().isEmpty()) {
             Notification.show("Email field is required");
-        } else if (!masterPassword.equals(confirmMasterPassword)) {
-            Notification.show("Passwords don't match");
         } else {
             AuthenticationResponseDTO authenticationResponseDTO = authenticationService.register(
                     RegisterRequestDTO.builder()

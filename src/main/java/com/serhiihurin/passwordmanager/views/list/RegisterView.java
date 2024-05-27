@@ -1,9 +1,12 @@
 package com.serhiihurin.passwordmanager.views.list;
 
+import com.serhiihurin.passwordmanager.dto.AuthenticationRequestDTO;
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
+import com.serhiihurin.passwordmanager.facade.interfaces.USBFlashDriveInfoRetrievalFacade;
 import com.serhiihurin.passwordmanager.service.interfaces.USBFlashDriveInfoRetrievalService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H1;
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RegisterView extends VerticalLayout {
     private final AuthenticationFacade authenticationFacade;
     private final USBFlashDriveInfoRetrievalService usbService;
+    private final USBFlashDriveInfoRetrievalFacade usbService2;
 
     private final TextField firstName = new TextField("First name");
     private final TextField lastName = new TextField("Last name");
@@ -34,9 +38,10 @@ public class RegisterView extends VerticalLayout {
 
     Button nextButton = new Button("Next");
 
-    public RegisterView(AuthenticationFacade authenticationFacade, USBFlashDriveInfoRetrievalService usbService) {
+    public RegisterView(AuthenticationFacade authenticationFacade, USBFlashDriveInfoRetrievalService usbService, USBFlashDriveInfoRetrievalFacade usbService2) {
         this.authenticationFacade = authenticationFacade;
         this.usbService = usbService;
+        this.usbService2 = usbService2;
 
         addClassName("register-view");
         setSizeFull();
@@ -48,8 +53,6 @@ public class RegisterView extends VerticalLayout {
                 firstName,
                 lastName,
                 email,
-//                masterPassword,
-//                confirmMasterPassword,
                 configureNextButton()
         );
         log.info(this.usbService.getUSBFlashDriveInfo());
@@ -61,22 +64,32 @@ public class RegisterView extends VerticalLayout {
         nextButton.addClickShortcut(Key.ENTER);
 
         nextButton.addClickListener(event -> {
-//            authenticationFacade.registerUser(
-//                    firstName.getValue(),
-//                    lastName.getValue(),
-//                    email.getValue(),
-//                    masterPassword.getValue(),
-//                    confirmMasterPassword.getValue()
-//            );
-//            UI.getCurrent().navigate("");
             if (!validateData()) {
                 validateData();
             } else {
                 updateView();
+                completeRegistration();
             }
         });
 
         return nextButton;
+    }
+
+    private void completeRegistration() {
+        masterPassword.setValue(usbService2.linkUSBFlashDrive(null));
+        authenticationFacade.registerUser(
+                firstName.getValue(),
+                lastName.getValue(),
+                email.getValue(),
+                masterPassword.getValue()
+        );
+        authenticationFacade.authenticateUser(
+                AuthenticationRequestDTO.builder()
+                        .email(email.getValue())
+                        .password(masterPassword.getValue())
+                        .build()
+        );
+        UI.getCurrent().navigate("");
     }
 
     private boolean validateData() {
@@ -96,6 +109,5 @@ public class RegisterView extends VerticalLayout {
     private void updateView() {
         remove(mainText, firstName, lastName, email, nextButton);
         add(mainText, USBFlashDriveText, masterPassword);
-
     }
 }

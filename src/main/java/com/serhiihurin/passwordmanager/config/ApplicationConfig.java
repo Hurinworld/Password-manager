@@ -1,5 +1,6 @@
 package com.serhiihurin.passwordmanager.config;
 
+import com.serhiihurin.passwordmanager.connector.DllConnector;
 import com.serhiihurin.passwordmanager.dao.UserRepository;
 import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
 import com.serhiihurin.passwordmanager.entity.Record;
@@ -58,6 +59,11 @@ public class ApplicationConfig {
         modelMapper.getConfiguration()
                 .setMatchingStrategy(MatchingStrategies.LOOSE);
         return modelMapper;
+    }
+
+    @Bean
+    public DllConnector dllConnector() {
+        return new DllConnector();
     }
 
 //    @Bean

@@ -10,8 +10,7 @@ public interface AuthenticationFacade {
             String firstName,
             String lastName,
             String email,
-            String masterPassword,
-            String confirmMasterPassword
+            String masterPassword
     );
     AuthenticationResponseDTO authenticateUser(AuthenticationRequestDTO request);
     User getAuthenticatedUser();

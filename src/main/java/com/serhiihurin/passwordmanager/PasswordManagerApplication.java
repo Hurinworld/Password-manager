@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-@Theme("passwordmanager")
 @PWA(name = "Password Manager", shortName = "Password Manager")
 public class PasswordManagerApplication implements AppShellConfigurator {
 

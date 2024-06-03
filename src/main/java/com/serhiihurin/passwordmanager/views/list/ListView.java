@@ -15,12 +15,14 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 
 @PageTitle("Password Manager")
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "home", layout = MainLayout.class)
 @PermitAll
+@Slf4j
 public class ListView extends VerticalLayout {
     private final RecordFacade recordFacade;
     private RecordForm recordForm;
@@ -33,6 +35,8 @@ public class ListView extends VerticalLayout {
         this.recordFacade = recordFacade;
 
         currentAuthenticatedUser = authenticationFacade.getAuthenticatedUser();
+        log.info("Authenticated user in ListView: {}", currentAuthenticatedUser);
+        log.info(currentAuthenticatedUser.getPassword());
 
         addClassName("list-view");
         setSizeFull();
@@ -100,18 +104,6 @@ public class ListView extends VerticalLayout {
     private void configureForm() {
         recordForm = new RecordForm(Collections.emptyList());
         recordForm.setWidth("25em");
-
-//        recordForm.save.addClickListener(
-//                event -> {
-//                    recordFacade.createRecord(currentAuthenticatedUser, recordForm.getRecord());
-//                    updateList();
-//                    closeRecordForm();
-//                }
-//        );
-//        recordForm.delete.addClickListener(
-//                event -> recordFacade.deleteRecord(currentAuthenticatedUser, recordForm.getRecord().getRecordId())
-//        );
-//        recordForm.cancel.addClickListener(event -> closeRecordForm());
 
         recordForm.addSaveListener(this::createRecord);
         recordForm.addDeleteListener(this::deleteRecord);

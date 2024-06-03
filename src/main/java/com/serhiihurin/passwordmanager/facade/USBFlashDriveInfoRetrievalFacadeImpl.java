@@ -31,7 +31,7 @@ public class USBFlashDriveInfoRetrievalFacadeImpl implements USBFlashDriveInfoRe
                         log.info("Empty data");
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage());
                     }
                 }
             } while (Objects.equals(USBFlashDriveInfo, ""));
@@ -42,7 +42,7 @@ public class USBFlashDriveInfoRetrievalFacadeImpl implements USBFlashDriveInfoRe
         try {
             USBFlashDriveInfo = usbFlashDriveTask.call();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         return USBFlashDriveInfo;
 //        CompletableFuture<String> future = new CompletableFuture<>();

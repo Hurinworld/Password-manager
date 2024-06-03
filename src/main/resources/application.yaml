@@ -13,4 +13,15 @@ application:
   security:
     jwt:
       secret-key: cb24f858d80b44012c2af75344f4cbcf4b33bc4ee40130240f17fc9e368fb4f5
-      expiration: 86400000 #day
+      expiration: 900 #seconds
+
+server:
+  servlet:
+    session:
+      tracking-modes: cookie
+  port: 8443
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: DOnf($#15fgs!f,.vf0.X
+    key-store-type: PKCS12
+    key-alias: password-manager

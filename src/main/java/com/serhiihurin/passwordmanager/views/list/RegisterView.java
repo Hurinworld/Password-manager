@@ -48,17 +48,19 @@ public class RegisterView extends VerticalLayout {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
+        configureNextButton();
+
         add(
                 mainText,
                 firstName,
                 lastName,
                 email,
-                configureNextButton()
+                nextButton
         );
         log.info(this.usbService.getUSBFlashDriveInfo());
     }
 
-    private Component configureNextButton() {
+    private void configureNextButton() {
         masterPassword.setReadOnly(true);
         nextButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         nextButton.addClickShortcut(Key.ENTER);
@@ -71,8 +73,6 @@ public class RegisterView extends VerticalLayout {
                 completeRegistration();
             }
         });
-
-        return nextButton;
     }
 
     private void completeRegistration() {
@@ -89,7 +89,7 @@ public class RegisterView extends VerticalLayout {
                         .password(masterPassword.getValue())
                         .build()
         );
-        UI.getCurrent().navigate("");
+        UI.getCurrent().navigate("/home");
     }
 
     private boolean validateData() {

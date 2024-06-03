@@ -7,13 +7,22 @@ import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.service.interfaces.AuthenticationService;
 import com.serhiihurin.passwordmanager.service.interfaces.JWTService;
 import com.serhiihurin.passwordmanager.service.interfaces.UserService;
+import com.vaadin.flow.server.VaadinServletRequest;
+import com.vaadin.flow.server.VaadinServletResponse;
 import com.vaadin.flow.spring.security.AuthenticationContext;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +30,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final transient AuthenticationContext authenticationContext;
+    private final AuthenticationContext authenticationContext;
+
+    private static final String JWT_HEADER_AND_PAYLOAD_COOKIE_NAME = "jwt.headerAndPayload";
+    private static final String JWT_SIGNATURE_COOKIE_NAME = "jwt.signature";
 
     @Override
     public AuthenticationResponseDTO register(RegisterRequestDTO registerRequestDTO) {
@@ -34,15 +46,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(
-                                request.getEmail(),
-                                request.getPassword()
-                        )
-                )
+//        SecurityContext context = SecurityContextHolder.getContext();
+//        context.setAuthentication(
+//                authenticationManager.authenticate(
+//                        new UsernamePasswordAuthenticationToken(
+//                                request.getEmail(),
+//                                request.getPassword()
+//                        )
+//                )
+//        );
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = userService.getUserByEmail(request.getEmail());
         String jwtToken = jwtService.generateAccessToken(user);
         return AuthenticationResponseDTO.builder()
@@ -52,12 +68,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public User getAuthenticatedUser() {
-        return authenticationContext.getAuthenticatedUser(User.class)
+        return getAuthentication().map(authentication -> userService.getUserByEmail(authentication.getName()))
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     @Override
     public void logout() {
         authenticationContext.logout();
+        clearCookies();
+    }
+
+    private Optional<Authentication> getAuthentication() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        return Optional.ofNullable(context.getAuthentication())
+                .filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken));
+    }
+
+    private void clearCookies() {
+        clearCookie(JWT_HEADER_AND_PAYLOAD_COOKIE_NAME);
+        clearCookie(JWT_SIGNATURE_COOKIE_NAME);
+    }
+
+    private void clearCookie(String cookieName) {
+        HttpServletRequest request = VaadinServletRequest.getCurrent()
+                .getHttpServletRequest();
+        HttpServletResponse response = VaadinServletResponse.getCurrent()
+                .getHttpServletResponse();
+
+        Cookie k = new Cookie(
+                cookieName, null);
+        k.setPath(getRequestContextPath(request));
+        k.setMaxAge(0);
+        k.setSecure(request.isSecure());
+        k.setHttpOnly(false);
+        response.addCookie(k);
+    }
+
+    private String getRequestContextPath(HttpServletRequest request) {
+        final String contextPath = request.getContextPath();
+        return "".equals(contextPath) ? "/" : contextPath;
     }
 }

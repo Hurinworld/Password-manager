@@ -6,6 +6,7 @@ import com.serhiihurin.passwordmanager.dto.RegisterRequestDTO;
 import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.service.interfaces.AuthenticationService;
+import com.serhiihurin.passwordmanager.service.interfaces.EncryptionService;
 import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AuthenticationFacadeImpl implements AuthenticationFacade {
     private final AuthenticationService authenticationService;
+
     @Override
     public AuthenticationResponseDTO registerUser(
             String firstName,

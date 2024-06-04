@@ -8,4 +8,5 @@ import lombok.Data;
 public class AuthenticationRequestDTO {
     private String email;
     private String password;
+    private String key;
 }

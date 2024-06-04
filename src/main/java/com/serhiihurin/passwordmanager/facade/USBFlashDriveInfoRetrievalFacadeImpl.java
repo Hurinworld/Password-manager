@@ -5,6 +5,7 @@ import com.serhiihurin.passwordmanager.facade.interfaces.USBFlashDriveInfoRetrie
 import com.serhiihurin.passwordmanager.service.interfaces.USBFlashDriveInfoRetrievalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.samuelcampos.usbdrivedetector.USBDeviceDetectorManager;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -16,16 +17,20 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 public class USBFlashDriveInfoRetrievalFacadeImpl implements USBFlashDriveInfoRetrievalFacade {
     private final USBFlashDriveInfoRetrievalService usbService;
+    private final USBDeviceDetectorManager usbDeviceDetectorManager;
 
     @Override
     public String linkUSBFlashDrive(User currentAuthenticatedUser) {
         Callable<String> usbFlashDriveTask = () -> {
             String USBFlashDriveInfo;
+            String usbUUID;
             do {
                 USBFlashDriveInfo = usbService.getUSBFlashDriveInfo();
+                usbUUID = usbDeviceDetectorManager.getRemovableDevices().get(0).getUuid();
                 if (!Objects.equals(USBFlashDriveInfo, "")) {
                     log.info("Got string: {}", USBFlashDriveInfo);
-                    return USBFlashDriveInfo;
+                    log.info(usbDeviceDetectorManager.getRemovableDevices().get(0).toString());
+                    return USBFlashDriveInfo + usbUUID;
                 } else {
                     try {
                         log.info("Empty data");

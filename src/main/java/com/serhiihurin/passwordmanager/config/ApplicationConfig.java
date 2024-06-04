@@ -6,6 +6,7 @@ import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
 import com.serhiihurin.passwordmanager.entity.Record;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.samuelcampos.usbdrivedetector.USBDeviceDetectorManager;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -80,6 +81,11 @@ public class ApplicationConfig {
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return new SimpleUrlAuthenticationFailureHandler("/login?sessionExpired=true");
+    }
+
+    @Bean
+    public USBDeviceDetectorManager driveDetector() {
+        return new USBDeviceDetectorManager();
     }
 
 //    @Bean

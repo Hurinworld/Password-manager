@@ -25,6 +25,8 @@ public class User implements UserDetails{
     @NotEmpty
     private String masterPassword;
     @NotEmpty
+    private String key;
+    @NotEmpty
     private String firstName;
     @NotEmpty
     private String lastName;

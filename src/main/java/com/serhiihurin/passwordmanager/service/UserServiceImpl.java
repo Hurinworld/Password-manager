@@ -7,11 +7,13 @@ import com.serhiihurin.passwordmanager.enums.EntityType;
 import com.serhiihurin.passwordmanager.service.interfaces.GeneratorService;
 import com.serhiihurin.passwordmanager.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final GeneratorService generatorService;
     private final UserRepository userRepository;
@@ -31,12 +33,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(RegisterRequestDTO registerRequestDTO) {
+        String masterPassword = registerRequestDTO.getMasterPassword();
+        log.info("Initial password {}", masterPassword);
         User user = User.builder()
                 .userId(generatorService.generateEntityId(EntityType.USER))
                 .firstName(registerRequestDTO.getFirstName())
                 .lastName(registerRequestDTO.getLastName())
                 .email(registerRequestDTO.getEmail())
                 .masterPassword(passwordEncoder.encode(registerRequestDTO.getMasterPassword()))
+                .key(registerRequestDTO.getKey())
                 .build();
         return userRepository.save(user);
     }

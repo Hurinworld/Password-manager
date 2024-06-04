@@ -7,7 +7,7 @@ spring:
     password: bestuser
 
 spring.jpa:
-  hibernate.ddl-auto: update
+  hibernate.ddl-auto: create
 
 application:
   security:

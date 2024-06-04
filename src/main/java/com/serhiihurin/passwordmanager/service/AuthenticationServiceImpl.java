@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -55,11 +56,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 //                        )
 //                )
 //        );
+//        String key = request.getKey()
+//        ;
+        User user = userService.getUserByEmail(request.getEmail());
+        if (!Objects.equals(request.getKey(), user.getKey())) {
+            throw new RuntimeException("Authentication failed.");
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = userService.getUserByEmail(request.getEmail());
         String jwtToken = jwtService.generateAccessToken(user);
         return AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)

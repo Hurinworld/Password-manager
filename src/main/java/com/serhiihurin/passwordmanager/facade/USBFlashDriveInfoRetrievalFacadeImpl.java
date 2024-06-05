@@ -2,6 +2,7 @@ package com.serhiihurin.passwordmanager.facade;
 
 import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.facade.interfaces.USBFlashDriveInfoRetrievalFacade;
+import com.serhiihurin.passwordmanager.service.interfaces.FileService;
 import com.serhiihurin.passwordmanager.service.interfaces.USBFlashDriveInfoRetrievalService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
@@ -18,19 +18,25 @@ import java.util.concurrent.CompletableFuture;
 public class USBFlashDriveInfoRetrievalFacadeImpl implements USBFlashDriveInfoRetrievalFacade {
     private final USBFlashDriveInfoRetrievalService usbService;
     private final USBDeviceDetectorManager usbDeviceDetectorManager;
+    private final FileService fileService;
 
     @Override
-    public String linkUSBFlashDrive(User currentAuthenticatedUser) {
+    public String linkUSBFlashDrive(boolean isRegisterProcess) {
         Callable<String> usbFlashDriveTask = () -> {
             String USBFlashDriveInfo;
             String usbUUID;
+            String USBKey;
             do {
                 USBFlashDriveInfo = usbService.getUSBFlashDriveInfo();
                 usbUUID = usbDeviceDetectorManager.getRemovableDevices().get(0).getUuid();
+                if (isRegisterProcess) {
+                    fileService.generateKeyFile();
+                }
+                USBKey = fileService.getKeyFromFile();
                 if (!Objects.equals(USBFlashDriveInfo, "")) {
                     log.info("Got string: {}", USBFlashDriveInfo);
                     log.info(usbDeviceDetectorManager.getRemovableDevices().get(0).toString());
-                    return USBFlashDriveInfo + usbUUID;
+                    return USBFlashDriveInfo + usbUUID + USBKey;
                 } else {
                     try {
                         log.info("Empty data");
@@ -40,7 +46,7 @@ public class USBFlashDriveInfoRetrievalFacadeImpl implements USBFlashDriveInfoRe
                     }
                 }
             } while (Objects.equals(USBFlashDriveInfo, ""));
-            return null; // Якщо нічого не знайдено, повертаємо null
+            return null;
         };
 
         String USBFlashDriveInfo = null;

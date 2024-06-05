@@ -6,7 +6,6 @@ import com.serhiihurin.passwordmanager.dto.RegisterRequestDTO;
 import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.service.interfaces.AuthenticationService;
-import com.serhiihurin.passwordmanager.service.interfaces.EncryptionService;
 import com.serhiihurin.passwordmanager.service.interfaces.FileService;
 import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,6 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
         } else if (email.trim().isEmpty()) {
             Notification.show("Email field is required");
         } else {
-            fileService.generateKeyFile();
             AuthenticationResponseDTO authenticationResponseDTO = authenticationService.register(
                     RegisterRequestDTO.builder()
                             .firstName(firstName)

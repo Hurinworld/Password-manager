@@ -12,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Objects;
 
 @Service
@@ -20,18 +19,17 @@ import java.util.Objects;
 public class FileServiceImpl implements FileService {
     private final USBDeviceDetectorManager usbDeviceDetectorManager;
     private final GeneratorService generatorService;
-    private final String CONTENT = getContent();
-    private final String FILEPATH = getFilepath();
 
     @Override
     public void generateKeyFile() {
-        String filePath = usbDeviceDetectorManager.getRemovableDevices().get(0).getDevice() + "USBKey.key";
+        String filePath = getFilepath();
+        if (filePath == null) {
+            throw new RuntimeException("USB device not found or not accessible");
+        }
         File file = new File(filePath);
-//        // Ensure the parent directories exist
-//        file.getParentFile().mkdirs();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(Objects.requireNonNull(CONTENT));
+            writer.write(Objects.requireNonNull(getContent()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -39,25 +37,29 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String getKeyFromFile() {
-        String key;
+        String filePath = getFilepath();
+        if (filePath == null) {
+            throw new RuntimeException("USB device not found or not accessible");
+        }
+
         try {
-            byte[] keyBytes = Files.readAllBytes(Path.of(Objects.requireNonNull(FILEPATH)));
-            key = Arrays.toString(keyBytes);
-            return key;
+            byte[] keyBytes = Files.readAllBytes(Path.of(filePath));
+            return new String(keyBytes);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getContent(){
-        if (generatorService != null) {
-            return generatorService.generatePassword("100", true, true, true);
-        } else return null;
+    private String getContent() {
+        return generatorService.generatePassword("100", true, true, true);
     }
 
     private String getFilepath() {
-        if (usbDeviceDetectorManager != null) {
+        if (usbDeviceDetectorManager != null && !usbDeviceDetectorManager.getRemovableDevices().isEmpty()) {
             return usbDeviceDetectorManager.getRemovableDevices().get(0).getDevice() + "USBKey.key";
-        } else return null;
+        } else {
+            return null;
+        }
     }
 }
+

@@ -4,7 +4,6 @@ import com.serhiihurin.passwordmanager.service.interfaces.AuthenticationService;
 import com.serhiihurin.passwordmanager.service.interfaces.EncryptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.*;
@@ -23,7 +22,6 @@ import java.util.Base64;
 @Slf4j
 public class EncryptionServiceImpl implements EncryptionService {
     private final AuthenticationService authenticationService;
-    private final PasswordEncoder passwordEncoder;
     private final String algorithm = "AES/CBC/PKCS5Padding";
     private final IvParameterSpec iv = loadIv();
 
@@ -57,10 +55,10 @@ public class EncryptionServiceImpl implements EncryptionService {
     }
 
     private SecretKey getKey(String input) {
-        String encodedString = passwordEncoder.encode(input);
-        int midIndex = encodedString.length() / 2;
-        String firstHalf = encodedString.substring(0, midIndex);
-        String secondHalf = encodedString.substring(midIndex);
+//        String encodedString = passwordEncoder.encode(input);
+        int midIndex = input.length() / 2;
+        String firstHalf = input.substring(0, midIndex);
+        String secondHalf = input.substring(midIndex);
 
         String rearrangedFirstHalf = rearrangeString(firstHalf);
         String rearrangedSecondHalf = rearrangeString(secondHalf);

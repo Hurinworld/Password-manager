@@ -14,6 +14,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserService userService;
     private final JWTService jwtService;
@@ -47,21 +49,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
-//        SecurityContext context = SecurityContextHolder.getContext();
-//        context.setAuthentication(
-//                authenticationManager.authenticate(
-//                        new UsernamePasswordAuthenticationToken(
-//                                request.getEmail(),
-//                                request.getPassword()
-//                        )
-//                )
-//        );
-//        String key = request.getKey()
-//        ;
         User user = userService.getUserByEmail(request.getEmail());
-        if (!Objects.equals(request.getKey(), user.getKey())) {
-            throw new RuntimeException("Authentication failed.");
-        }
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );

@@ -38,6 +38,8 @@ public class ListView extends VerticalLayout {
         log.info("Authenticated user in ListView: {}", currentAuthenticatedUser);
         log.info(currentAuthenticatedUser.getPassword());
 
+
+
         addClassName("list-view");
         setSizeFull();
         configureGrid();

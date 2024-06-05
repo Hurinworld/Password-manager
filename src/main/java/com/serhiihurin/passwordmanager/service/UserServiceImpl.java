@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService {
                 .lastName(registerRequestDTO.getLastName())
                 .email(registerRequestDTO.getEmail())
                 .masterPassword(passwordEncoder.encode(registerRequestDTO.getMasterPassword()))
-                .key(registerRequestDTO.getKey())
                 .build();
         return userRepository.save(user);
     }

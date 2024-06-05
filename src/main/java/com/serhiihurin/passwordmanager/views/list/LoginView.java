@@ -1,8 +1,5 @@
 package com.serhiihurin.passwordmanager.views.list;
 
-import com.serhiihurin.passwordmanager.dto.AuthenticationRequestDTO;
-import com.serhiihurin.passwordmanager.entity.User;
-import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.facade.interfaces.USBFlashDriveInfoRetrievalFacade;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -12,7 +9,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import com.vaadin.flow.spring.security.AuthenticationContext;
 import lombok.extern.slf4j.Slf4j;
 
 @Route("login")
@@ -24,11 +20,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
     private final USBFlashDriveInfoRetrievalFacade usbFlashDriveInfoRetrievalFacade;
     Button readPasswordButton = new Button("Read Password from USB");
 
-    public LoginView(
-            AuthenticationFacade authenticationFacade,
-            AuthenticationContext authenticationContext,
-            USBFlashDriveInfoRetrievalFacade usbFlashDriveInfoRetrievalFacade
-    ) {
+    public LoginView(USBFlashDriveInfoRetrievalFacade usbFlashDriveInfoRetrievalFacade) {
         this.usbFlashDriveInfoRetrievalFacade = usbFlashDriveInfoRetrievalFacade;
         addClassName("login-view");
         setSizeFull();
@@ -36,22 +28,6 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
         setJustifyContentMode(JustifyContentMode.CENTER);
 
         readPasswordButton.addClickListener(event -> fillInPasswordField());
-
-//        loginForm.addLoginListener(
-//                event -> {
-//                    if (authenticationFacade.authenticateUser(
-//                            AuthenticationRequestDTO.builder()
-//                                    .email(event.getUsername())
-//                                    .password(event.getPassword())
-//                                    .build()
-//                    ) != null) {
-//                        User user = authenticationContext.getAuthenticatedUser(User.class)
-//                                .orElseThrow(() -> new RuntimeException("gdsgsdfs"));
-//                        log.info("Entered redirection block with user: {}", user.getFirstName());
-//                        UI.getCurrent().navigate("/home");
-//                    }
-//                }
-//        );
         loginForm.setAction("login");
         loginForm.setForgotPasswordButtonVisible(false);
 
@@ -71,7 +47,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
     }
 
     private void fillInPasswordField() {
-        String password = usbFlashDriveInfoRetrievalFacade.linkUSBFlashDrive(null);
+        String password = usbFlashDriveInfoRetrievalFacade.linkUSBFlashDrive(false);
         UI.getCurrent().getPage().executeJs(
                 "document.querySelector('vaadin-login-form vaadin-password-field').value = $0;",
                 password);

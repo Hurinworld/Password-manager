@@ -3,14 +3,11 @@ package com.serhiihurin.passwordmanager.views.list;
 import com.serhiihurin.passwordmanager.dto.AuthenticationRequestDTO;
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.facade.interfaces.USBFlashDriveInfoRetrievalFacade;
-import com.serhiihurin.passwordmanager.service.interfaces.USBFlashDriveInfoRetrievalService;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -25,23 +22,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RegisterView extends VerticalLayout {
     private final AuthenticationFacade authenticationFacade;
-    private final USBFlashDriveInfoRetrievalService usbService;
-    private final USBFlashDriveInfoRetrievalFacade usbService2;
-
+    private final USBFlashDriveInfoRetrievalFacade usbFlashDriveInfoRetrievalFacade;
     private final TextField firstName = new TextField("First name");
     private final TextField lastName = new TextField("Last name");
     private final EmailField email = new EmailField("email");
     private final PasswordField masterPassword = new PasswordField("master password");
-    private final PasswordField confirmMasterPassword = new PasswordField("confirm master password");
-    private final H1 mainText = new H1("Register | Password Manager");
-    private final H2 USBFlashDriveText = new H2("Insert your USB flash drive to complete registration");
 
     Button nextButton = new Button("Next");
 
-    public RegisterView(AuthenticationFacade authenticationFacade, USBFlashDriveInfoRetrievalService usbService, USBFlashDriveInfoRetrievalFacade usbService2) {
+    public RegisterView(
+            AuthenticationFacade authenticationFacade,
+            USBFlashDriveInfoRetrievalFacade usbFlashDriveInfoRetrievalFacade
+    ) {
         this.authenticationFacade = authenticationFacade;
-        this.usbService = usbService;
-        this.usbService2 = usbService2;
+        this.usbFlashDriveInfoRetrievalFacade = usbFlashDriveInfoRetrievalFacade;
 
         addClassName("register-view");
         setSizeFull();
@@ -51,13 +45,12 @@ public class RegisterView extends VerticalLayout {
         configureNextButton();
 
         add(
-                mainText,
+                new H1("Register | Password Manager"),
                 firstName,
                 lastName,
                 email,
                 nextButton
         );
-        log.info(this.usbService.getUSBFlashDriveInfo());
     }
 
     private void configureNextButton() {
@@ -69,14 +62,13 @@ public class RegisterView extends VerticalLayout {
             if (!validateData()) {
                 validateData();
             } else {
-                updateView();
                 completeRegistration();
             }
         });
     }
 
     private void completeRegistration() {
-        masterPassword.setValue(usbService2.linkUSBFlashDrive(null));
+        masterPassword.setValue(usbFlashDriveInfoRetrievalFacade.linkUSBFlashDrive(true));
         authenticationFacade.registerUser(
                 firstName.getValue(),
                 lastName.getValue(),
@@ -104,10 +96,5 @@ public class RegisterView extends VerticalLayout {
             return false;
         }
         return true;
-    }
-
-    private void updateView() {
-        remove(mainText, firstName, lastName, email, nextButton);
-        add(mainText, USBFlashDriveText, masterPassword);
     }
 }

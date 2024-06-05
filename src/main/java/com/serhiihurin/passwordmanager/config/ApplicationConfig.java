@@ -24,13 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.Arrays;
-
 @Configuration
 @EnableAsync
 @EnableScheduling
@@ -87,9 +80,4 @@ public class ApplicationConfig {
     public USBDeviceDetectorManager driveDetector() {
         return new USBDeviceDetectorManager();
     }
-
-//    @Bean
-//    public AuthenticationContext authenticationContext() {
-//        return new AuthenticationContext();
-//    }
 }

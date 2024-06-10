@@ -12,6 +12,7 @@ public interface RecordFacade {
     List<Record> getAllRecordsByUserIdAndGroupId(User currentAuthenticatedUser, String groupId);
     RecordSimpleViewDTO getRecordByUserId(User currentAuthenticatedUser, String recordId);
     RecordExtendedViewDTO getExtendedRecordByUserId(User currentAuthenticatedUser, String recordId);
+    Record getFullRecordInfoByUserId(User currentAuthenticatedUser, String recordId);
     List<RecordSimpleViewDTO> filterRecordsByTitle(String userId, String filterText);
     void createRecord(User currentAuthenticatedUser, RecordExtendedViewDTO recordExtendedViewDTO);
     void deleteRecord(User currentAuthenticatedUser, String recordId);

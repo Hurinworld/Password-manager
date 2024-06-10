@@ -53,7 +53,9 @@ public class MainLayout extends AppLayout {
         SideNav sideNav = new SideNav();
         sideNav.addItem(
                 new SideNavItem("Home", "/home", VaadinIcon.HOME.create()),
-                new SideNavItem("Generator", "/generator", VaadinIcon.KEY.create()));
+                new SideNavItem("Generator", "/generator", VaadinIcon.KEY.create()),
+                new SideNavItem("Groups", "/groups", VaadinIcon.FOLDER.create())
+        );
         return sideNav;
     }
 }

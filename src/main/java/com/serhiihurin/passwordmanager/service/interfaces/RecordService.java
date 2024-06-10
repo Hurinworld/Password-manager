@@ -12,5 +12,6 @@ public interface RecordService {
     List<Record> filterRecordsByTitle(String userId, String filterText);
     Record getRecordByUserId(String userId, String recordId);
     Record createRecord(User currentAuthenticatedUser, RecordExtendedViewDTO recordExtendedViewDTO);
+    void updateRecord(Record record);
     void deleteRecord(String recordId);
 }

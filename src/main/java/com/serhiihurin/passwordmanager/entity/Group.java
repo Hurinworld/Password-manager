@@ -14,7 +14,7 @@ import java.util.List;
 public class Group {
     @Id
     private String groupId;
-    private String groupName;
+    private String title;
     private Integer capacity;
 
     @ToString.Exclude

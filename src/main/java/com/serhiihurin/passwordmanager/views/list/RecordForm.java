@@ -38,7 +38,7 @@ public class RecordForm extends FormLayout {
         binder.bindInstanceFields(this);
 
         group.setItems(groups);
-        group.setItemLabelGenerator(Group::getGroupName);
+        group.setItemLabelGenerator(Group::getTitle);
 
         add(
                 title,

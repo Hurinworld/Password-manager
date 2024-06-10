@@ -26,7 +26,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 
 @Configuration
 @EnableAsync
-@EnableScheduling
 @RequiredArgsConstructor
 @Slf4j
 public class ApplicationConfig {

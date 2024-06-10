@@ -56,6 +56,12 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
+    public void updateRecord(Record record) {
+        recordRepository.save(record);
+    }
+
+
+    @Override
     public void deleteRecord(String recordId) {
         recordRepository.deleteById(recordId);
     }

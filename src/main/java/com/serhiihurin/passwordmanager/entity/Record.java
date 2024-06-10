@@ -33,7 +33,7 @@ public class Record {
         if (group == null) {
             return  null;
         } else {
-            return group.getGroupName();
+            return group.getTitle();
         }
     }
 }

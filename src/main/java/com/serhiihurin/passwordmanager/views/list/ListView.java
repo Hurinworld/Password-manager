@@ -4,6 +4,7 @@ import com.serhiihurin.passwordmanager.dto.RecordExtendedViewDTO;
 import com.serhiihurin.passwordmanager.dto.RecordSimpleViewDTO;
 import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
+import com.serhiihurin.passwordmanager.facade.interfaces.GroupFacade;
 import com.serhiihurin.passwordmanager.facade.interfaces.RecordFacade;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -14,31 +15,35 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouteAlias;
 import jakarta.annotation.security.PermitAll;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
-
 @PageTitle("Password Manager")
 @Route(value = "home", layout = MainLayout.class)
+@RouteAlias(value = "", layout = MainLayout.class)
 @PermitAll
 @Slf4j
 public class ListView extends VerticalLayout {
     private final RecordFacade recordFacade;
+    private final GroupFacade groupFacade;
     private RecordForm recordForm;
     private final User currentAuthenticatedUser;
 
     Grid<RecordSimpleViewDTO> grid = new Grid<>(RecordSimpleViewDTO.class);
     TextField searchField = new TextField();
 
-    public ListView(AuthenticationFacade authenticationFacade, RecordFacade recordFacade) {
+    public ListView(
+            AuthenticationFacade authenticationFacade,
+            RecordFacade recordFacade,
+            GroupFacade groupFacade
+    ) {
         this.recordFacade = recordFacade;
+        this.groupFacade = groupFacade;
 
         currentAuthenticatedUser = authenticationFacade.getAuthenticatedUser();
         log.info("Authenticated user in ListView: {}", currentAuthenticatedUser);
         log.info(currentAuthenticatedUser.getPassword());
-
-
 
         addClassName("list-view");
         setSizeFull();
@@ -104,7 +109,7 @@ public class ListView extends VerticalLayout {
     }
 
     private void configureForm() {
-        recordForm = new RecordForm(Collections.emptyList());
+        recordForm = new RecordForm(groupFacade.getGroupsByUserId(currentAuthenticatedUser));
         recordForm.setWidth("25em");
 
         recordForm.addSaveListener(this::createRecord);

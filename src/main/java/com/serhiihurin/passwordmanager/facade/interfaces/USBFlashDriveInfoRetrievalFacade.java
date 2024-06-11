@@ -1,8 +1,9 @@
 package com.serhiihurin.passwordmanager.facade.interfaces;
 
 import com.serhiihurin.passwordmanager.entity.User;
+import com.serhiihurin.passwordmanager.enums.ExistingRecordsOperationType;
 
 public interface USBFlashDriveInfoRetrievalFacade {
     String linkUSBFlashDrive(boolean isRegisterProcess);
-    void unlinkUSBFlashDrive(User currentAuthenticatedUser);
+    void changeUSBFlashDrive(User currentAuthenticatedUser, ExistingRecordsOperationType operationType);
 }

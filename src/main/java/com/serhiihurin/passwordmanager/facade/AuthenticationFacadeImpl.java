@@ -6,6 +6,7 @@ import com.serhiihurin.passwordmanager.dto.RegisterRequestDTO;
 import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.service.interfaces.AuthenticationService;
+import com.serhiihurin.passwordmanager.service.interfaces.EmailService;
 import com.serhiihurin.passwordmanager.service.interfaces.FileService;
 import com.vaadin.flow.component.notification.Notification;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AuthenticationFacadeImpl implements AuthenticationFacade {
     private final AuthenticationService authenticationService;
+    private final EmailService emailService;
     private final FileService fileService;
 
     @Override
@@ -43,6 +45,7 @@ public class AuthenticationFacadeImpl implements AuthenticationFacade {
                             .build()
             );
             Notification.show("Registration successful!");
+            emailService.sendGreetingsEmail(email, firstName);
             return authenticationResponseDTO;
         }
         return null;

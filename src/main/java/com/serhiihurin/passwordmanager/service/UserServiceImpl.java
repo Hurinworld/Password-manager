@@ -44,4 +44,12 @@ public class UserServiceImpl implements UserService {
                 .build();
         return userRepository.save(user);
     }
+
+    @Override
+    public void saveUser(User user) {
+        if (!user.getMasterPassword().startsWith("$2a$10$")) {
+            user.setMasterPassword(passwordEncoder.encode(user.getMasterPassword()));
+        }
+        userRepository.save(user);
+    }
 }

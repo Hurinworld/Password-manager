@@ -36,7 +36,8 @@ public class LoginView extends VerticalLayout implements BeforeEnterListener {
                 new H1("Password Manager"),
                 loginForm,
                 readPasswordButton,
-                new RouterLink("Don't have an account? Register now", RegisterView.class)
+                new RouterLink("Don't have an account? Register now", RegisterView.class),
+                new RouterLink("Lost your USB token? Link a new one", LinkNewTokenView.class)
         );
 
         getElement().executeJs(

@@ -28,7 +28,7 @@ public class RegisterView extends VerticalLayout {
     private final EmailField email = new EmailField("email");
     private final PasswordField masterPassword = new PasswordField("master password");
 
-    Button nextButton = new Button("Next");
+    Button registerButton = new Button("Register");
 
     public RegisterView(
             AuthenticationFacade authenticationFacade,
@@ -49,16 +49,16 @@ public class RegisterView extends VerticalLayout {
                 firstName,
                 lastName,
                 email,
-                nextButton
+                registerButton
         );
     }
 
     private void configureNextButton() {
         masterPassword.setReadOnly(true);
-        nextButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        nextButton.addClickShortcut(Key.ENTER);
+        registerButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        registerButton.addClickShortcut(Key.ENTER);
 
-        nextButton.addClickListener(event -> {
+        registerButton.addClickListener(event -> {
             if (!validateData()) {
                 validateData();
             } else {

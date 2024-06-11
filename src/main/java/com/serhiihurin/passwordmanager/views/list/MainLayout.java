@@ -9,11 +9,8 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import com.vaadin.flow.router.HighlightConditions;
-import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
 public class MainLayout extends AppLayout {
@@ -54,7 +51,8 @@ public class MainLayout extends AppLayout {
         sideNav.addItem(
                 new SideNavItem("Home", "/home", VaadinIcon.HOME.create()),
                 new SideNavItem("Generator", "/generator", VaadinIcon.KEY.create()),
-                new SideNavItem("Groups", "/groups", VaadinIcon.FOLDER.create())
+                new SideNavItem("Groups", "/groups", VaadinIcon.FOLDER.create()),
+                new SideNavItem("Settings", "/settings", VaadinIcon.COG.create())
         );
         return sideNav;
     }

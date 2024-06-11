@@ -7,4 +7,5 @@ public interface UserService {
     User getUser(String userId);
     User getUserByEmail(String email);
     User createUser(RegisterRequestDTO registerRequestDTO);
+    void saveUser(User user);
 }

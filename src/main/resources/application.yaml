@@ -5,6 +5,16 @@ spring:
     url: jdbc:mysql://localhost:3307/password_manager?useSSL=false&&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: bestuser
     password: bestuser
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: misterhurin@gmail.com
+    password: ukwhprskpgbzdanw
+    protocol: smtp
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
+      ssl.trust: smtp.gmail.com
 
 spring.jpa:
   hibernate.ddl-auto: update

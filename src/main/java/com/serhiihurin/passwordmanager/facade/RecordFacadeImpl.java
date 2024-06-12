@@ -18,6 +18,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -58,10 +59,10 @@ public class RecordFacadeImpl implements RecordFacade {
                 RecordExtendedViewDTO.class
         );
         recordExtendedViewDTO.setUsername(
-                encryptionService.decrypt(recordExtendedViewDTO.getUsername())
+                encryptionService.decrypt(recordExtendedViewDTO.getUsername(), Optional.empty())
         );
         recordExtendedViewDTO.setPassword(
-                encryptionService.decrypt(recordExtendedViewDTO.getPassword())
+                encryptionService.decrypt(recordExtendedViewDTO.getPassword(), Optional.empty())
         );
         return recordExtendedViewDTO;
     }
@@ -92,10 +93,10 @@ public class RecordFacadeImpl implements RecordFacade {
             groupService.saveGroup(group);
         }
         recordExtendedViewDTO.setUsername(
-                encryptionService.encrypt(recordExtendedViewDTO.getUsername())
+                encryptionService.encrypt(recordExtendedViewDTO.getUsername(), Optional.empty())
         );
         recordExtendedViewDTO.setPassword(
-                encryptionService.encrypt(recordExtendedViewDTO.getPassword())
+                encryptionService.encrypt(recordExtendedViewDTO.getPassword(), Optional.empty())
         );
         recordService.createRecord(currentAuthenticatedUser, recordExtendedViewDTO);
     }

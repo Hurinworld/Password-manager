@@ -5,5 +5,5 @@ import com.serhiihurin.passwordmanager.enums.ExistingRecordsOperationType;
 
 public interface USBFlashDriveInfoRetrievalFacade {
     String linkUSBFlashDrive(boolean isRegisterProcess);
-    void changeUSBFlashDrive(User currentAuthenticatedUser, ExistingRecordsOperationType operationType);
+    void changeUSBFlashDrive(User currentUser, ExistingRecordsOperationType operationType);
 }

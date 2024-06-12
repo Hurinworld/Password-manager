@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 @Component
@@ -66,16 +67,16 @@ public class USBFlashDriveInfoRetrievalFacadeImpl implements USBFlashDriveInfoRe
     }
 
     @Override
-    public void changeUSBFlashDrive(User currentAuthenticatedUser, ExistingRecordsOperationType operationType) {
-        List<Record> recordList = recordService.getAllRecordsByUserId(currentAuthenticatedUser.getUserId());
+    public void changeUSBFlashDrive(User currentUser, ExistingRecordsOperationType operationType) {
+        List<Record> recordList = recordService.getAllRecordsByUserId(currentUser.getUserId());
         for(Record record : recordList) {
             if (operationType == ExistingRecordsOperationType.DECRYPT) {
-                record.setUsername(encryptionService.decrypt(record.getUsername()));
-                record.setPassword(encryptionService.decrypt(record.getPassword()));
+                record.setUsername(encryptionService.decrypt(record.getUsername(), Optional.of(currentUser)));
+                record.setPassword(encryptionService.decrypt(record.getPassword(), Optional.of(currentUser)));
             }
             if (operationType == ExistingRecordsOperationType.ENCRYPT) {
-                record.setUsername(encryptionService.encrypt(record.getUsername()));
-                record.setPassword(encryptionService.encrypt(record.getPassword()));
+                record.setUsername(encryptionService.encrypt(record.getUsername(), Optional.of(currentUser)));
+                record.setPassword(encryptionService.encrypt(record.getPassword(), Optional.of(currentUser)));
             }
             recordService.updateRecord(record);
         }

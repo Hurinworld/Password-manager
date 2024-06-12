@@ -1,5 +1,6 @@
 package com.serhiihurin.passwordmanager.service;
 
+import com.serhiihurin.passwordmanager.entity.User;
 import com.serhiihurin.passwordmanager.service.interfaces.AuthenticationService;
 import com.serhiihurin.passwordmanager.service.interfaces.EncryptionService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,10 +28,15 @@ public class EncryptionServiceImpl implements EncryptionService {
     private final IvParameterSpec iv = loadIv();
 
     @Override
-    public String encrypt(String input) {
+    public String encrypt(String input, Optional<User> anonymousUser) {
         try {
             Cipher cipher = Cipher.getInstance(algorithm);
-            cipher.init(Cipher.ENCRYPT_MODE, getKey(authenticationService.getAuthenticatedUser().getPassword()), iv);
+            if (anonymousUser.isPresent()) {
+                cipher.init(Cipher.ENCRYPT_MODE, getKey(anonymousUser.get().getPassword()), iv);
+            } else {
+                cipher.init(Cipher.ENCRYPT_MODE, getKey(authenticationService.getAuthenticatedUser().getPassword()), iv);
+
+            }
             byte[] cipherText = cipher.doFinal(input.getBytes());
             return Base64.getEncoder()
                     .encodeToString(cipherText);
@@ -40,11 +47,14 @@ public class EncryptionServiceImpl implements EncryptionService {
     }
 
     @Override
-    public String decrypt(String cipherText) {
-        log.info(authenticationService.getAuthenticatedUser().getPassword());
+    public String decrypt(String cipherText, Optional<User> anonymousUser) {
         try {
             Cipher cipher = Cipher.getInstance(algorithm);
-            cipher.init(Cipher.DECRYPT_MODE, getKey(authenticationService.getAuthenticatedUser().getPassword()), iv);
+            if (anonymousUser.isPresent()) {
+                cipher.init(Cipher.DECRYPT_MODE, getKey(anonymousUser.get().getPassword()), iv);
+            } else {
+                cipher.init(Cipher.DECRYPT_MODE, getKey(authenticationService.getAuthenticatedUser().getPassword()), iv);
+            }
             byte[] plainText = cipher.doFinal(Base64.getDecoder()
                     .decode(cipherText));
             return new String(plainText);

@@ -1,7 +1,11 @@
 package com.serhiihurin.passwordmanager.service.interfaces;
 
-public interface EncryptionService {
-    String encrypt(String input);
+import com.serhiihurin.passwordmanager.entity.User;
 
-    String decrypt(String cipherText);
+import java.util.Optional;
+
+public interface EncryptionService {
+    String encrypt(String input, Optional<User> anonymousUser);
+
+    String decrypt(String cipherText, Optional<User> anonymousUser);
 }

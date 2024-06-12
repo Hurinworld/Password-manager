@@ -76,6 +76,7 @@ public class LinkNewTokenView extends VerticalLayout {
             }
             if (user != null) {
                 verificationCode = emailFacade.sendPasswordChangingVerificationCode(email.getValue());
+                Notification.show("Sent verification code to email " + email.getValue());
             }
         });
 

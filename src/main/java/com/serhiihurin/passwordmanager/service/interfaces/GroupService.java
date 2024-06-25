@@ -5,6 +5,8 @@ import com.serhiihurin.passwordmanager.entity.Group;
 import java.util.List;
 
 public interface GroupService {
+    Group getGroup(String groupId);
+
     List<Group> getGroupsByUserId(String userId);
 
     void saveGroup(Group group);

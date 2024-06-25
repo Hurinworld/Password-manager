@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface GroupRepository extends JpaRepository<Group, String> {
     List<Group> getGroupsByUserUserId(String userId);
+
+    void deleteGroupByTitle(String title);
 }

@@ -45,6 +45,11 @@ public class GroupFacadeImpl implements GroupFacade {
 
     @Override
     public void deleteGroup(String groupId) {
+        Group group = groupService.getGroup(groupId);
+        for (Record record : group.getRecords()) {
+            record.setGroup(null);
+            recordService.updateRecord(record);
+        }
         groupService.deleteGroup(groupId);
     }
 }

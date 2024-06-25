@@ -8,6 +8,7 @@ import com.serhiihurin.passwordmanager.facade.interfaces.AuthenticationFacade;
 import com.serhiihurin.passwordmanager.facade.interfaces.GroupFacade;
 import com.serhiihurin.passwordmanager.facade.interfaces.RecordFacade;
 import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.MultiSelectComboBox;
@@ -26,6 +27,7 @@ import jakarta.annotation.security.PermitAll;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 
+import java.util.Collections;
 import java.util.List;
 
 @PageTitle("Groups")
@@ -38,9 +40,11 @@ public class GroupsView extends Composite<VerticalLayout> {
     private final RecordFacade recordFacade;
     private final ModelMapper modelMapper;
 
+    private final TextField groupIdField = new TextField("groupId");
+
     Grid<Group> groupGrid = new Grid<>(Group.class);
 
-    TextField textField = new TextField("Title");
+    TextField titleField = new TextField("Title");
 
     Button addGroupButton = new Button("Add");
     Button removeGroupButton = new Button("Remove");
@@ -64,7 +68,7 @@ public class GroupsView extends Composite<VerticalLayout> {
         this.modelMapper = modelMapper;
 
         h3.setWidth("max-content");
-        textField.setWidth("min-content");
+        titleField.setWidth("min-content");
 
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
@@ -98,7 +102,7 @@ public class GroupsView extends Composite<VerticalLayout> {
         layoutRow.add(layoutColumn3);
 
         layoutColumn3.add(h3);
-        layoutColumn3.add(textField);
+        layoutColumn3.add(titleField);
         layoutColumn3.add(multiSelectComboBox);
         layoutColumn3.add(addGroupButton);
         layoutColumn3.add(removeGroupButton);
@@ -119,13 +123,28 @@ public class GroupsView extends Composite<VerticalLayout> {
         groupGrid.getColumns().forEach(column -> column.setAutoWidth(true));
 
         groupGrid.asSingleSelect().addValueChangeListener(event -> {
-            textField.setValue(event.getValue().getTitle());
-            List<RecordSimpleViewDTO> items = modelMapper.map(
-                    event.getValue().getRecords(),
-                    new TypeToken<List<RecordSimpleViewDTO>>(){}.getType()
-            );
-            multiSelectComboBox.setItems(items);
+            Group selectedGroup = event.getValue();
+            if (selectedGroup != null) {
+                titleField.setValue(selectedGroup.getTitle());
+                if (selectedGroup.getRecords() != null) {
+                    List<RecordSimpleViewDTO> items = modelMapper.map(
+                            selectedGroup.getRecords(),
+                            new TypeToken<List<RecordSimpleViewDTO>>(){}.getType()
+                    );
+                    multiSelectComboBox.setItems(items);
+                } else {
+                    multiSelectComboBox.setItems(Collections.emptyList());
+                }
+                groupIdField.setValue(selectedGroup.getGroupId());
+            } else {
+                titleField.clear();
+                multiSelectComboBox.setItems(Collections.emptyList());
+                groupIdField.clear();
+            }
         });
+
+
+        groupGrid.addItemDoubleClickListener(event -> UI.getCurrent().navigate("home"));
     }
 
     private void configureButtons() {
@@ -135,7 +154,12 @@ public class GroupsView extends Composite<VerticalLayout> {
                 event -> createGroup()
         );
         removeGroupButton.setWidth("100%");
-
+        removeGroupButton.addClickListener(
+                event -> {
+                    groupFacade.deleteGroup(groupIdField.getValue());
+                    updateList();
+                }
+        );
     }
 
     private void createGroup() {
@@ -148,7 +172,7 @@ public class GroupsView extends Composite<VerticalLayout> {
                 .toList();
         groupFacade.createGroup(
                 Group.builder()
-                        .title(textField.getValue())
+                        .title(titleField.getValue())
                         .capacity(recordList.size())
                         .records(recordList)
                         .user(currentAuthenticatedUser)

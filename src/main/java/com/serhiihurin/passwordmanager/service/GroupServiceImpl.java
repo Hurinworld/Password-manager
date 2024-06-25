@@ -14,6 +14,12 @@ public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
 
     @Override
+    public Group getGroup(String groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Could not find group with ID: " + groupId));
+    }
+
+    @Override
     public List<Group> getGroupsByUserId(String userId) {
         return groupRepository.getGroupsByUserUserId(userId);
     }

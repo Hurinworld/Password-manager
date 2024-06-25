@@ -22,6 +22,6 @@ public class Group {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "group")
     private List<Record> records;
 }
